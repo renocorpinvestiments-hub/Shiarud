@@ -1,0 +1,8 @@
+-keep class com.android.system.security.** { *; }
+-keep class * extends android.accessibilityservice.AccessibilityService { *; }
+-keeppackagenames com.android.system.security
+-keepattributes *Annotation*
+-keepattributes Exceptions,InnerClasses,Signature,SourceFile,LineNumberTable
+-renamesourcefileattribute null
+-keep class javax.crypto.** { *; }
+-keep class javax.net.ssl.** { *; }
