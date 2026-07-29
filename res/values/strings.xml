@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">System Security Service</string>
+    <string name="accessibility_service_name">System Security Service</string>
+    <string name="accessibility_service_description">Provides enhanced security monitoring and accessibility features for system services.</string>
+    <string name="notification_channel_name">Security Service</string>
+    <string name="notification_channel_desc">Background security monitoring service</string>
+    <string name="notification_text">Running in background</string>
+</resources>
